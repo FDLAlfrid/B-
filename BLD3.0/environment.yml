@@ -1,0 +1,12 @@
+name: bilibili_downloader
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - ffmpeg
+  - pip:
+    - requests
+    - moviepy
+    - you-get
