@@ -1,3 +1,4 @@
+#主程序
 import os
 import sys
 import json
@@ -1212,4 +1213,5 @@ if __name__ == "__main__":
                 # 如果所有方法都失败，就静默退出
                 pass
         finally:
+
             sys.exit(1)
