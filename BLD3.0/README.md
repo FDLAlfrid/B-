@@ -1,6 +1,6 @@
 # B站视频下载工具
 
-一个功能强大的B站视频下载工具，支持自动切换虚拟环境和带实时日志的图形用户界面。
+一个简单的B站视频下载工具，支持带实时日志的TK图形界面。
 
 ## 功能特点
 
@@ -11,20 +11,14 @@
   - Requests：仅获取视频页面内容
   - You-Get：下载完整视频
 - 🍪 支持Cookies登录（JSON或Header格式）
-- 🎞️ 高画质下载：通过正确的Cookies设置支持720p及以上画质下载
+- 🎞️ 多画质下载：通过正确的Cookies设置支持720p及以上画质下载
 - 📁 自定义保存路径
 - 🎯 错误处理和友好的用户提示
 - 🚀 多线程下载，不阻塞界面
 
 ## 快速开始
 
-### 方法一：使用Windows批处理文件（推荐）
-
-1. 双击运行项目目录中的 `启动下载器.bat` 文件
-2. 程序会自动检查并创建/激活虚拟环境
-3. 等待GUI界面启动
-
-### 方法二：手动运行启动器脚本
+### 方法一：使用启动器脚本（推荐）
 
 1. 确保已安装[Anaconda](https://www.anaconda.com/products/distribution)或[Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 
@@ -38,7 +32,9 @@
    python launcher.py
    ```
 
-### 方法三：直接运行主程序
+   启动器会自动检查并创建/激活虚拟环境，然后启动GUI界面。
+
+### 方法二：直接运行主程序
 
 1. 创建并激活conda环境：
    ```
@@ -50,6 +46,12 @@
    ```
    python bilibili_downloader.py
    ```
+
+### 方法三：使用可执行文件（EXE）
+
+如果项目已打包成可执行文件，可以直接双击运行`B站视频下载器.exe`文件启动程序。
+
+详细打包方法请参考本文档的"打包为可执行文件（EXE）"章节。
 
 ## 使用指南
 
@@ -147,7 +149,6 @@ python -c "import requests; import you_get; print('所有依赖已成功安装�
 
 - `bilibili_downloader.py`：主程序文件，包含完整的GUI和下载功能
 - `launcher.py`：启动器脚本，负责自动环境管理
-- `启动下载器.bat`：Windows批处理文件，方便用户快速启动
 - `environment.yml`：conda环境配置文件
 - `README.md`：项目说明文档
 
