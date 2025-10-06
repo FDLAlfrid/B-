@@ -2,3 +2,4 @@
 尝试统计排名vocaloid区视频数据的可视化项目。
 目前新增了分支：B站视频下载器，主要使用硬编码集成的you-get库。
 之后可能更新整合。
+致谢：[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
