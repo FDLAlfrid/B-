@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}关于我们 - VOCALOID社交平台{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">关于 VOCALOID社交平台</h2>
+                    
+                    <div class="about-content">
+                        <h4>平台简介</h4>
+                        <p>VOCALOID社交平台是一个专为VOCALOID音乐爱好者打造的社区平台，致力于为用户提供音乐分享、社交互动和个性化推荐服务。</p>
+                        
+                        <h4>主要功能</h4>
+                        <ul>
+                            <li>🎵 热门VOCALOID音乐推荐</li>
+                            <li>👥 基于兴趣匹配的社交功能</li>
+                            <li>💬 音乐评论和交流</li>
+                            <li>📊 音乐趋势分析和统计</li>
+                        </ul>
+                        
+                        <h4>技术特色</h4>
+                        <ul>
+                            <li>基于B站API的音乐数据采集</li>
+                            <li>智能推荐算法匹配同好用户</li>
+                            <li>响应式设计，支持多设备访问</li>
+                            <li>安全的用户认证和数据保护</li>
+                        </ul>
+                        
+                        <h4>开发团队</h4>
+                        <p>我们是一群热爱VOCALOID技术的开发者，致力于为VOCALOID社区提供更好的服务和体验。</p>
+                        
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('main.index') }}" class="btn btn-primary me-2">返回首页</a>
+                            <a href="{{ url_for('main.contact') }}" class="btn btn-outline-secondary">联系我们</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

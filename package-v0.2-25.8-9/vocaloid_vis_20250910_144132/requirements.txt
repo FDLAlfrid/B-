@@ -1,0 +1,15 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Migrate
+Werkzeug
+requests
+beautifulsoup4
+python-dotenv
+Jinja2
+
+# 生产环境可选依赖
+# gunicorn
+# psycopg2-binary
+# redis
+# PyJWT

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ music.title if music else '音乐详情' }} - VOCALOID社交平台{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if music %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ music.cover_url }}" class="card-img-top" alt="{{ music.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ music.title }}</h5>
+                    <p class="card-text">作者: {{ music.author }}</p>
+                    <p class="card-text">播放量: {{ music.view_count|default(0) }}</p>
+                    
+                    {% if music.tags %}
+                    <div class="mb-3">
+                        {% for tag in music.tags.split(',') %}
+                        <span class="badge bg-primary me-1">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="https://www.bilibili.com/video/{{ music.bvid }}" target="_blank" class="btn btn-primary">
+                            <i class="bi bi-play-fill me-1"></i>播放
+                        </a>
+                        <button class="btn btn-outline-secondary">
+                            <i class="bi bi-heart me-1"></i>收藏
+                        </button>
+                        <button class="btn btn-outline-secondary share-button" 
+                                data-bvid="{{ music.bvid }}" 
+                                data-title="{{ music.title }}">
+                            <i class="bi bi-share me-1"></i>分享
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4>音乐详情</h4>
+                    <p>BV号: {{ music.bvid }}</p>
+                    <p>时长: {{ music.duration|format_duration }}</p>
+                    <p>收录时间: {{ music.crawl_time.strftime('%Y-%m-%d %H:%M') if music.crawl_time else '未知' }}</p>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>评论区域</h5>
+                    <p class="text-muted">评论功能即将上线...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        音乐不存在或已被删除
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+UndefinedError
+jinja2.exceptions.UndefinedError: 'stats' is undefined
+
+Traceback (most recent call last)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 2213, in __call__
+return self.wsgi_app(environ, start_response)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 2193, in wsgi_app
+response = self.handle_exception(e)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 2190, in wsgi_app
+response = self.full_dispatch_request()
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+rv = self.handle_user_exception(e)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+rv = self.dispatch_request()
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\app.py", line 1469, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+File "D:\Alfrid\Desktop\fix1\app\routes\music.py", line 155, in music_rankings
+return render_template('music_rankings.html',
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\templating.py", line 151, in render_template
+return _render(app, template, context)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\flask\templating.py", line 132, in _render
+rv = template.render(context)
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\jinja2\environment.py", line 1301, in render
+self.environment.handle_exception()
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\jinja2\environment.py", line 936, in handle_exception
+raise rewrite_traceback_stack(source=source)
+File "D:\Alfrid\Desktop\fix1\app\templates\music_rankings.html", line 1, in top-level template code
+{% extends "base.html" %}
+File "D:\Alfrid\Desktop\fix1\app\templates\base.html", line 253, in top-level template code
+{% block content %}{% endblock %}
+File "D:\Alfrid\Desktop\fix1\app\templates\music_rankings.html", line 73, in block 'content'
+<strong>{{ stats.total_music }}</strong>
+File "E:\ProgramData\miniconda3\envs\vocaloid_vis\lib\site-packages\jinja2\environment.py", line 485, in getattr
+return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'stats' is undefined
+The debugger caught an exception in your WSGI application. You can now look at the traceback which led to the error.
+To switch between the interactive traceback and the plaintext one, you can click on the "Traceback" headline. From the text traceback you can also create a paste of it. For code execution mouse-over the frame you want to debug and click on the console icon on the right side.
+
+You can execute arbitrary Python code in the stack frames and there are some extra helpers available for introspection:
+
+dump() shows all variables in the frame
+dump(obj) dumps all that's known about the object
+Brought to you by DON'T PANIC, your friendly Werkzeug powered traceback interpreter.

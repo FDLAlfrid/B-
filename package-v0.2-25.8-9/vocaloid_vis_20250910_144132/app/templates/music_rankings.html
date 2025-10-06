@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}VOCALOID音乐排行榜 - 多维度数据分析{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- 侧边栏筛选区域 -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>筛选条件</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" id="filterForm">
+                        <!-- 时间范围筛选 -->
+                        <div class="mb-3">
+                            <label class="form-label">时间范围</label>
+                            <select name="time_range" class="form-select" onchange="this.form.submit()">
+                                <option value="today" {% if time_range == 'today' %}selected{% endif %}>今天</option>
+                                <option value="week" {% if time_range == 'week' %}selected{% endif %}>最近一周</option>
+                                <option value="month" {% if time_range == 'month' %}selected{% endif %}>最近一月</option>
+                                <option value="all" {% if time_range == 'all' %}selected{% endif %}>全部时间</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 排序方式 -->
+                        <div class="mb-3">
+                            <label class="form-label">排序方式</label>
+                            <select name="sort_by" class="form-select" onchange="this.form.submit()">
+                                <option value="view_count" {% if sort_by == 'view_count' %}selected{% endif %}>播放量</option>
+                                <option value="duration" {% if sort_by == 'duration' %}selected{% endif %}>时长</option>
+                                <option value="crawl_time" {% if sort_by == 'crawl_time' %}selected{% endif %}>收录时间</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 显示数量 -->
+                        <div class="mb-3">
+                            <label class="form-label">显示数量</label>
+                            <select name="limit" class="form-select" onchange="this.form.submit()">
+                                <option value="10" {% if limit == 10 %}selected{% endif %}>10条</option>
+                                <option value="20" {% if limit == 20 %}selected{% endif %}>20条</option>
+                                <option value="50" {% if limit == 50 %}selected{% endif %}>50条</option>
+                                <option value="100" {% if limit == 100 %}selected{% endif %}>100条</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 分区筛选 -->
+                        <div class="mb-3">
+                            <label class="form-label">音乐分区</label>
+                            <select name="rid" class="form-select" onchange="this.form.submit()">
+                                <option value="30" {% if rid == 30 %}selected{% endif %}>VOCALOID·UTAU</option>
+                                <option value="29" {% if rid == 29 %}selected{% endif %}>华语</option>
+                                <option value="190" {% if rid == 190 %}selected{% endif %}>其他</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-arrow-repeat me-1"></i>应用筛选
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 统计信息卡片 -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>数据统计</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>总音乐数:</span>
+                        <strong>{{ stats.total_music }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>总分享数:</span>
+                        <strong>{{ stats.total_shares }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>总收藏数:</span>
+                        <strong>{{ stats.total_favorites }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>总用户数:</span>
+                        <strong>{{ stats.total_users }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-trophy me-2"></i>VOCALOID音乐排行榜
+                </h2>
+                <div class="btn-group">
+                    <a href="{{ url_for('music.music_list') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-music-note-list me-1"></i>音乐列表
+                    </a>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-house me-1"></i>返回首页
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 排行榜表格 -->
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="60">排名</th>
+                                    <th>音乐信息</th>
+                                    <th width="100">播放量</th>
+                                    <th width="100">时长</th>
+                                    <th width="120">收录时间</th>
+                                    <th width="100">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for music in music_list %}
+                                <tr>
+                                    <td class="text-center">
+                                        <span class="badge bg-{% if loop.index == 1 %}warning{% elif loop.index <= 3 %}primary{% elif loop.index <= 10 %}info{% else %}secondary{% endif %} fs-6">
+                                            {{ loop.index }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="/api/proxy-image?url={{ music.cover_url }}" 
+                                                 alt="{{ music.title }}" 
+                                                 class="rounded me-3" 
+                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-1">{{ music.title }}</h6>
+                                                <small class="text-muted">{{ music.author }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="badge bg-light text-dark">
+                                            <i class="bi bi-eye me-1"></i>{{ music.view_count|number_format }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <small class="text-muted">{{ music.duration|format_duration }}</small>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ music.crawl_time.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" 
+                                                    onclick="window.location.href='{{ url_for('music.music_detail', bvid=music.bvid) }}';">
+                                                <i class="bi bi-play"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary share-btn" data-bvid="{{ music.bvid }}">
+                                                <i class="bi bi-share"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-music-note-beamed display-4 d-block mb-3"></i>
+                                        暂无音乐数据
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据可视化图表 -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>播放量分布</h6>
+                            <div class="chart-controls mt-2">
+                                <label for="chart-limit" class="form-label me-2">显示数量:</label>
+                                <select id="chart-limit" class="form-select mb-3" style="width: auto;">
+                                    <option value="5">显示 5 项</option>
+                                    <option value="10">显示 10 项</option>
+                                    <option value="15">显示 15 项</option>
+                                    <option value="20">显示 20 项</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="viewCountChart"></canvas> <!-- 移除内联height属性 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>时长分布</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="durationChart"></canvas> <!-- 移除内联height属性 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<style>
+.chart-container {
+    margin-bottom: 180px; /* 进一步增加底部边距 */
+    position: relative;
+    z-index: 1;
+    height: 380px; /* 略微降低图表高度 */
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 15px;
+    resize: both;
+    overflow: visible;
+}
+
+/* 添加卡片内边距样式 */
+.chart-card .card-body {
+    padding-bottom: 50px !important;
+}
+</style>
+<script>
+// 更新图表显示数量的函数
+function updateChartDisplayLimit(limit) {
+    // 销毁现有图表实例
+    if (window.viewCountChart) {
+        window.viewCountChart.destroy();
+    }
+    if (window.durationChart) {
+        window.durationChart.destroy();
+    }
+    // 使用新的限制重新初始化图表
+    initCharts(limit);
+}
+
+// 为数量选择器添加事件监听器
+document.addEventListener('DOMContentLoaded', function() {
+    const limitSelect = document.getElementById('chart-limit');
+    if (limitSelect) {
+        // 设置默认值
+        limitSelect.value = '10';
+        // 添加change事件监听器
+        limitSelect.addEventListener('change', function() {
+            updateChartDisplayLimit(parseInt(this.value));
+        });
+    }
+    // 初始加载图表
+    initCharts(10);
+});
+
+function initCharts(limit = 10) {
+    // 播放量分布图表
+    const viewCountCtx = document.getElementById('viewCountChart');
+    if (viewCountCtx) {
+        // 根据limit筛选数据
+        const allViewCounts = {{ music_list|map(attribute='view_count')|list|tojson|safe }};
+        const allLabels = {{ music_list|map(attribute='title')|list|tojson|safe }};
+        const viewCounts = allViewCounts.slice(0, limit);
+        const labels = allLabels.slice(0, limit);
+        
+        window.viewCountChart = new Chart(viewCountCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '播放量',
+                    data: viewCounts,
+                    backgroundColor: 'rgba(126, 87, 194, 0.8)',
+                    borderColor: 'rgba(126, 87, 194, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: true,
+                            maxTicksLimit: limit,
+                            padding: 15
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: { font: { size: 11 } } // 减小图例字体大小
+                    }
+                }
+            }
+        });
+    }
+    
+    // 时长分布图表
+    const durationCtx = document.getElementById('durationChart');
+    if (durationCtx) {
+        const durations = {{ music_list|map(attribute='duration')|list|tojson|safe }};
+        
+        window.durationChart = new Chart(durationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['0-1分钟', '1-3分钟', '3-5分钟', '5分钟以上'],
+                datasets: [{
+                    data: [
+                        durations.filter(function(d) { return d <= 60; }).length,
+                        durations.filter(function(d) { return d > 60 && d <= 180; }).length,
+                        durations.filter(function(d) { return d > 180 && d <= 300; }).length,
+                        durations.filter(function(d) { return d > 300; }).length
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // 添加此属性确保图表正确调整大小
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
+}
+
+// 分享按钮点击事件
+document.querySelectorAll('.share-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const bvid = this.getAttribute('data-bvid');
+        const url = `https://www.bilibili.com/video/${bvid}`;
+        
+        navigator.clipboard.writeText(url).then(() => {
+            // 创建提示框
+            const tooltip = document.createElement('div');
+            tooltip.className = 'share-tooltip';
+            tooltip.textContent = '链接已复制到剪贴板!';
+            tooltip.style.left = `${this.getBoundingClientRect().left}px`;
+            tooltip.style.top = `${this.getBoundingClientRect().top - 30}px`;
+            document.body.appendChild(tooltip);
+            
+            // 2秒后移除提示
+            setTimeout(() => tooltip.remove(), 2000);
+        }).catch(err => {
+            console.error('复制失败:', err);
+        });
+    });
+});
+
+// 图表数量选择事件
+// 移除重复的事件监听器
+// document.getElementById('chart-limit').addEventListener('change', function() {
+//     initCharts(parseInt(this.value));
+// });
+
+// 页面加载时初始化图表
+// document.addEventListener('DOMContentLoaded', () => {
+//     initCharts(10);
+// });
+</script>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}VOCALOID音乐社交平台{% endblock %}
+
+{% block content %}
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">发现VOCALOID音乐，结交同好</h1>
+            <p class="lead mb-5">基于你的音乐品味，发现更多精彩内容和志同道合的朋友</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('music.music_list') }}" class="btn btn-light btn-lg">
+                    <i class="bi bi-music-note-list me-2"></i>浏览音乐
+                </a>
+                <a href="{{ url_for('music.music_rankings') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-trophy me-2"></i>音乐排行榜
+                </a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('social.matches') }}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-people me-2"></i>寻找同好
+                </a>
+                {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-user-plus me-2"></i>立即注册
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    
+    <!-- 搜索和时间筛选 -->
+    <section class="container mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <form method="GET" class="d-flex">
+                            <input type="text" name="q" class="form-control me-2" 
+                                   placeholder="搜索音乐标题、作者或标签..." value="{{ search_query }}">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <form method="GET" class="d-flex">
+                            <input type="hidden" name="q" value="{{ search_query }}">
+                            <select name="time_range" class="form-select" onchange="this.form.submit()">
+                                <option value="all" {% if time_range == 'all' %}selected{% endif %}>全部时间</option>
+                                <option value="today" {% if time_range == 'today' %}selected{% endif %}>今天</option>
+                                <option value="week" {% if time_range == 'week' %}selected{% endif %}>最近一周</option>
+                                <option value="month" {% if time_range == 'month' %}selected{% endif %}>最近一月</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <div class="btn-group">
+                            <form method="GET" class="me-1">
+                                <input type="hidden" name="time_range" value="{{ time_range }}">
+                                <input type="hidden" name="q" value="{{ search_query }}">
+                                <input type="hidden" name="refresh" value="true">
+                                <button type="submit" class="btn btn-outline-primary" title="刷新数据">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </form>
+                            <form method="GET">
+                                <input type="hidden" name="time_range" value="{{ time_range }}">
+                                <input type="hidden" name="q" value="{{ search_query }}">
+                                <input type="hidden" name="random" value="true">
+                                <button type="submit" class="btn btn-outline-success" title="随机推荐">
+                                    <i class="bi bi-shuffle"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 热门音乐区域 -->
+    <section class="container mb-5">
+        <h2 class="section-title">热门VOCALOID音乐</h2>
+        <div class="row">
+            {% for music in popular_music %}
+            <div class="col-md-3 mb-4">
+                <div class="card music-card" onclick="window.location.href=`{{ url_for('music.music_detail', bvid=music.bvid) }}`" style="cursor: pointer; position: relative; z-index: 1;">
+                    <img src="/api/proxy-image?url={{ music.cover_url }}" class="card-img-top" alt="{{ music.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ music.title }}</h5>
+                        <p class="card-text text-muted">{{ music.author }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <small class="text-muted"><i class="bi bi-eye me-1"></i>{{ music.view_count }}</small>
+                            <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ music.duration|format_duration }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('music.music_list') }}" class="btn btn-outline-primary">
+                查看更多音乐 <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </section>
+    
+    {% if current_user.is_authenticated %}
+    <!-- 推荐好友区域 -->
+    <section class="container mb-5">
+        <h2 class="section-title">为你推荐的朋友</h2>
+        <div class="row">
+            {% for match in potential_friends %}
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <img src="{{ match.avatar_url if match.avatar_url else url_for('static', filename='default_avatar.jpg') }}" 
+                             alt="{{ match.username }}" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                        <h5 class="card-title">{{ match.username }}</h5>
+                        <p class="card-text">{{ match.bio[:50] }}{% if match.bio|length > 50 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="bi bi-person-plus me-1"></i>关注
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-chat me-1"></i>聊天
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">完成兴趣设置，获取个性化好友推荐</p>
+                <a href="{{ url_for('social.user_interests') }}" class="btn btn-primary">
+                    <i class="bi bi-pencil me-1"></i>设置兴趣标签
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('social.matches') }}" class="btn btn-outline-primary">
+                查看更多匹配 <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </section>
+    
+    <!-- 兴趣分类区域 -->
+    <section class="container mb-5">
+        <h2 class="section-title">探索音乐分类</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <a href="{{ url_for('music_list', rid=30) }}" class="text-decoration-none">
+                    <div class="card h-100 bg-gradient-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-music-note-beamed me-2"></i>VOCALOID·UTAU</h5>
+                            <p class="card-text">探索VOCALOID和UTAU原创音乐</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a href="{{ url_for('music_list', rid=29) }}" class="text-decoration-none">
+                    <div class="card h-100 bg-gradient-secondary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-music-note-list me-2"></i>VOCALOID中文</h5>
+                            <p class="card-text">发现中文VOCALOID音乐作品</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a href="{{ url_for('music_list', rid=190) }}" class="text-decoration-none">
+                    <div class="card h-100 bg-gradient-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-globe-asia-australia me-2"></i>VOCALOID日文</h5>
+                            <p class="card-text">欣赏日文VOCALOID经典作品</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 统计数据区域 -->
+    <section class="container mb-5">
+        <h2 class="section-title">VOCALOID音乐趋势</h2>
+        <div class="card">
+            <div class="card-body">
+                <canvas id="musicTrendChart" height="300"></canvas>
+            </div>
+        </div>
+    </section>
+{% endif %}
+{% block extra_js %}
+    <script>
+        function pageInit() {
+            // 音乐趋势图表
+            const canvas = document.getElementById('musicTrendChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                    datasets: [{
+                        label: 'VOCALOID中文',
+                        data: [65000, 59000, 80000, 81000, 56000, 90000],
+                        borderColor: '#7e57c2',
+                        backgroundColor: 'rgba(126, 87, 194, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }, {
+                        label: 'VOCALOID日文',
+                        data: [28000, 48000, 40000, 45000, 56000, 76000],
+                        borderColor: '#42a5f5',
+                        backgroundColor: 'rgba(66, 165, 245, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'VOCALOID音乐播放量趋势'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '播放量'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% endblock %}
