@@ -22,6 +22,7 @@ jobs:
 
     - name: Build APK
       run: |
+        export ANDROID_ACCEPT_LICENSES=y
         buildozer android debug
 
     - name: Upload APK
