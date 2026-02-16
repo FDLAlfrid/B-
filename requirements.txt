@@ -1,3 +1,4 @@
 kivy==2.3.0
 requests==2.31.0
 pyjnius==1.6.1
+cython
