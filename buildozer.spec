@@ -9,7 +9,7 @@ source.dir = .
 
 version = 1.0.0
 
-requirements = python3,kivy,requests,pyjnius,openssl,cryptography,cython,hostpython3
+requirements = python3,kivy,requests,pyjnius,cython
 
 orientation = portrait
 
