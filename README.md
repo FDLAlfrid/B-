@@ -1,5 +1,5 @@
 # B站BV号查询 - Android APK
-
+注意：Kivy框架版本存在打包限制问题，目前已经暂停开发转向QT和其他框架。
 将Python命令行工具打包为Android APK应用，使用Kivy框架创建GUI界面。
 
 ## 项目结构
