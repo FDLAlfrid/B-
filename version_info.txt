@@ -1,0 +1,32 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(2, 0, 0, 0),
+    prodvers=(2, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+        StringTable(
+          u'040904B0',
+          [
+            StringStruct(u'CompanyName', u'AI Assistant'),
+            StringStruct(u'FileDescription', u'Vocaloid音乐推荐系统'),
+            StringStruct(u'FileVersion', u'2.0.0-beta'),
+            StringStruct(u'InternalName', u'VocaloidToolboxFusion'),
+            StringStruct(u'OriginalFilename', u'VocaloidToolboxFusion_v2.0.0-beta.exe'),
+            StringStruct(u'ProductName', u'Vocaloid Toolbox Fusion'),
+            StringStruct(u'ProductVersion', u'2.0.0-beta'),
+            StringStruct(u'LegalCopyright', u'Copyright (C) 2025'),
+          ]
+        )
+      ]
+    ),
+    VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
+  ]
+)

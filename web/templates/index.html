@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能音乐推荐系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <span class="logo">🎵</span>
+                <span class="brand-name">智能音乐推荐</span>
+            </div>
+            <div class="navbar-links">
+                <a href="/" class="nav-link active">首页</a>
+                <a href="/recommend" class="nav-link">推荐</a>
+                <a href="/login" class="nav-link login-btn">登录</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">发现你的专属音乐</h1>
+                <p class="hero-subtitle">基于智能算法，为你推荐最适合的VOCALOID音乐</p>
+                
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="搜索你喜欢的音乐..." class="search-input">
+                    <button id="search-btn" class="search-btn">搜索</button>
+                </div>
+                
+                <div class="quick-actions">
+                    <a href="/recommend" class="action-btn primary">立即体验推荐</a>
+                    <a href="/register" class="action-btn secondary">注册账号</a>
+                </div>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">10万+</div>
+                    <div class="stat-label">音乐资源</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5万+</div>
+                    <div class="stat-label">活跃用户</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">推荐准确率</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 推荐预览区 -->
+    <section class="preview-section">
+        <div class="container">
+            <h2 class="section-title">热门推荐</h2>
+            <div class="video-grid" id="hot-recommendations">
+                <!-- 动态加载推荐内容 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能介绍 -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>智能推荐</h3>
+                    <p>基于机器学习算法，分析你的听歌偏好，为你精准推荐</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎶</div>
+                    <h3>海量曲库</h3>
+                    <p>收录数万首VOCALOID音乐，涵盖各种风格和流派</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>多端同步</h3>
+                    <p>支持桌面和网页端，随时随地享受音乐</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>社区互动</h3>
+                    <p>与其他音乐爱好者分享你的歌单和心得</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 智能音乐推荐系统. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 视频详情弹窗 -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="video-detail"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
